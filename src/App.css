@@ -1,0 +1,39 @@
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-reveal {
+  animation: heroReveal 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Headline Reveal ───────────────────────────── */
+@keyframes headlineReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+    filter: blur(0);
+    text-shadow: 0 0 60px rgba(57, 255, 106, 0.25), 0 0 120px rgba(57, 255, 106, 0.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+    text-shadow: 0 0 30px rgba(57, 255, 106, 0.08);
+  }
+}
+
+.animate-headline-reveal {
+  animation: headlineReveal 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

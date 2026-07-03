@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* ===================================================
+   Critcache — Landing Page Stylesheet
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* ── Pixelbasel (bitmap/pixel font for hero headline) ──────────── */
+@font-face {
+  font-family: 'Pixelbasel';
+  src: url('/fonts/Pixelbasel.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design tokens ──────────────────────────────── */
+:root {
+  --bg-base:        #080B0A;
+  --bg-deep:        #050706;
+  --bg-glass:       rgba(10, 18, 12, 0.72);
+  --bg-surface:     rgba(255, 255, 255, 0.035);
+  --bg-surface-hv:  rgba(57, 255, 106, 0.06);
+
+  --green:          #39FF6A;
+  --green-dim:      #1FD44A;
+  --green-glow:     rgba(57, 255, 106, 0.18);
+  --paper:          #f3f4f6;
+  --ash:            #9ca3af;
+  --void:           #080B0A;
+  --rule:           rgba(57, 255, 106, 0.25);
+  --crit:           #39FF6A;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
