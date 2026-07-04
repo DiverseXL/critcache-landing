@@ -71,7 +71,7 @@ function Footer() {
           <span className="font-mono text-[#9BA39C] text-[13px]">critcache</span>
           <div className="flex gap-8 font-mono text-[#9BA39C] text-[13px]">
             <a href="https://www.npmjs.com/package/critcache" target="_blank" rel="noreferrer" className="hover:text-[#E8EDE9] transition-colors duration-150">npm</a>
-            <a href="#" className="hover:text-[#E8EDE9] transition-colors duration-150">github</a>
+            <a href="https://github.com/DiverseXL/critcache" target="_blank" rel="noreferrer" className="hover:text-[#E8EDE9] transition-colors duration-150">github</a>
             <a href="/docs" className="hover:text-[#E8EDE9] transition-colors duration-150">docs</a>
             <a href="#" className="hover:text-[#E8EDE9] transition-colors duration-150">MIT</a>
           </div>

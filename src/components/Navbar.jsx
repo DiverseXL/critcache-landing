@@ -60,7 +60,7 @@ function Navbar() {
           <Link to="/docs" className="hover:text-crit transition-colors">
             docs
           </Link>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-crit transition-colors">
+          <a href="https://github.com/DiverseXL/critcache" target="_blank" rel="noreferrer" className="hover:text-crit transition-colors">
             github
           </a>
         </nav>

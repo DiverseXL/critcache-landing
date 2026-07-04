@@ -375,7 +375,9 @@ function Docs() {
               view on npm
             </a>
             <a
-              href="#"
+              href="https://github.com/DiverseXL/critcache"
+              target="_blank"
+              rel="noreferrer"
               style={{
                 fontFamily: 'Inter, sans-serif',
                 color: '#9BA39C',
