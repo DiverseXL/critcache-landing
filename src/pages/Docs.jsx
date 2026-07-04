@@ -132,9 +132,9 @@ function Docs() {
         {/* ── Section 1: What is critcache ── */}
         <h2 style={sectionHeadingStyle}>What is critcache</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 48px 0' }}>
-          critcache is a CLI tool that fans out parallel AI code-review agents across your repo through BTL Runtime — and proves every dollar it saves you, live in your terminal.
+          critcache is a CLI tool that shows developers when BTL Runtime has turned a slow AI workflow into a near-instant one — surfacing live cache hits, latency reductions, and cost savings for every request.
           <br /><br />
-          It walks your codebase, picks the most relevant files, fires concurrent analysis calls through BTL Runtime's caching layer, and prints a live savings receipt per file as results land. Run it twice with compare and watch the cache hit rate climb.
+          It walks your codebase, picks the most relevant files, fires concurrent analysis calls through BTL Runtime's caching layer, and prints a live timing and savings receipt per file as results land. Run it twice with compare and watch response time drop from 4-5 seconds to under 1 second on cached files.
         </p>
 
         {/* ── Section 2: Requirements ── */}
@@ -215,6 +215,29 @@ function Docs() {
           No API key required. Simulates the full pipeline locally — file discovery, parallel agents, live renderer, synthesis pass, and report writer all run exactly as in production, but LLM calls are replaced with a local mock that simulates realistic cache hit behavior. Pass 1 shows cache misses, pass 2 shows cache hits — the cold-to-warm story works correctly in mock mode.
         </p>
 
+        {/* Sub-section: models */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>models</h3>
+        <div style={codeBlockStyle}>
+          <span>$ npx critcache models</span>
+          <CopyButton text="npx critcache models" />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Lists all models available on BTL Runtime — over 200 models across OpenAI, Anthropic, DeepSeek, Gemini, Mistral, and more. Use any model ID as your BTL_MODEL env var.
+        </p>
+
+        {/* Sub-section: stats */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>stats</h3>
+        <div style={codeBlockStyle}>
+          <span>$ npx critcache stats</span>
+          <CopyButton text="npx critcache stats" />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Shows cumulative spend and savings across all critcache runs in your BTL Runtime workspace — total requests, benchmark cost, cached input tokens, and cache hit rate. Pulls live data from BTL Runtime's /v1/usage/summary endpoint.
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', fontStyle: 'italic', margin: '8px 0 48px 0', lineHeight: 1.4 }}>
+          Requires GATEWAY_API_KEY. Shows real workspace data — not just the current run.
+        </p>
+
         {/* ── Section 5: Environment variables ── */}
         <h2 style={sectionHeadingStyle}>Environment variables</h2>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
@@ -230,7 +253,7 @@ function Docs() {
             {[
               ['GATEWAY_API_KEY', 'Yes*', '—', 'Your BTL Runtime API key'],
               ['BTL_BASE_URL', 'No', 'https://api.badtheorylabs.com/v1', 'BTL Runtime base URL'],
-              ['BTL_MODEL', 'No', 'gpt-4.1-mini', 'Model to use for analysis'],
+              ['BTL_MODEL', 'No', 'btl-2', 'Model to use for analysis'],
               ['CRITCACHE_MOCK', 'No', '—', 'Set to 1 to enable mock mode'],
             ].map((row, i) => (
               <tr key={i} style={{ background: i % 2 === 0 ? '#0B0E0C' : '#0F1410' }}>
@@ -250,9 +273,25 @@ function Docs() {
         {/* ── Section 6: How BTL Runtime caching works ── */}
         <h2 style={sectionHeadingStyle}>How BTL Runtime caching works</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
-          critcache sends every file through the same fixed system prompt and JSON schema. BTL Runtime caches this identical instruction scaffolding — on the first run, calls are cache misses and charged at full rate. On subsequent runs, the prompt prefix hits BTL's exact or prefix cache and returns near-instantly at a fraction of the cost.
+          BTL Runtime is the engine. critcache is the dashboard.
           <br /><br />
-          Every response includes three headers that critcache reads and displays live:
+          Every time your AI app makes a request, BTL Runtime knows: did this response come from cache? How much faster was it? Those details are buried in response headers most developers never look at. critcache makes them visible — per call, live in your terminal.
+          <br /><br />
+          critcache sends every file through the same fixed system prompt and JSON schema. This is an explicit architectural decision: keeping the instruction scaffolding byte-identical across every call is what makes BTL Runtime's exact and prefix caching fire reliably.
+          <br /><br />
+          On the first run, calls take 4-5 seconds and are cache misses. On subsequent runs, the same prompt hits BTL's cache and returns in under 1 second — a 6x speed improvement. Run compare to see this happen live on your own repo.
+          <br /><br />
+          BTL Runtime's savings mechanisms that critcache exposes:
+          <br />
+          - Exact response cache — identical requests served instantly
+          <br />
+          - Provider prompt cache — prefix reuse at the upstream level
+          <br />
+          - Request compaction — history compressed before hitting the provider
+          <br />
+          - Output budget shaping — runaway completions capped automatically
+          <br /><br />
+          Every response includes headers critcache reads live:
         </p>
         <div style={{
           background: '#0F1410',
@@ -263,14 +302,11 @@ function Docs() {
           color: '#39FF6A',
           lineHeight: 2,
         }}>
-          x-btl-cache-tier       — exact | prefix | none<br />
+          x-btl-cache-tier       — cache status per call<br />
           x-btl-benchmark-cost   — what you would have paid without caching<br />
           x-btl-customer-charge  — what you actually paid<br />
           x-btl-saved            — the difference, per call
         </div>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
-          Run compare to see this in action — the delta between pass 1 and pass 2 is your proof.
-        </p>
 
         {/* ── Bottom CTA ── */}
         <div style={{ textAlign: 'center', marginTop: '80px' }}>
@@ -292,10 +328,35 @@ function Docs() {
             }}
           >
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
-              $ npx critcache analyze .
+              $ CRITCACHE_MOCK=1 npx critcache compare .
             </span>
-            <CopyButton text="npx critcache analyze ." />
+            <CopyButton text="CRITCACHE_MOCK=1 npx critcache compare ." />
           </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 16px 0', lineHeight: 1.4, textAlign: 'center' }}>
+            No key needed — try it now
+          </p>
+          <div
+            style={{
+              ...glassStyle,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderRadius: '10px',
+              padding: '14px 18px',
+              gap: '12px',
+              textAlign: 'left',
+              maxWidth: '460px',
+              margin: '0 auto',
+            }}
+          >
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
+              $ npx critcache compare .
+            </span>
+            <CopyButton text="npx critcache compare ." />
+          </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 0 0', lineHeight: 1.4, textAlign: 'center' }}>
+            Full experience — requires GATEWAY_API_KEY
+          </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginTop: '24px' }}>
             <a
               href="https://www.npmjs.com/package/critcache"
