@@ -161,9 +161,17 @@ function Docs() {
           <span>$ npx critcache analyze .</span>
           <CopyButton text="npx critcache analyze ." />
         </div>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 48px 0', lineHeight: 1.4 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 12px 0', lineHeight: 1.4 }}>
           This will analyze up to 20 files in the current directory by default.
         </p>
+        <div style={{ background: '#0F1410', borderRadius: '12px', padding: '16px', fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#9BA39C', lineHeight: 1.6, marginBottom: '48px', border: '1px solid #1C2420' }}>
+          <strong style={{ color: '#E8EDE9' }}>Windows PowerShell users:</strong> set env vars like this before running:
+          <div style={{ background: '#0B0E0C', borderRadius: '8px', padding: '12px 16px', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#39FF6A', marginTop: '8px', lineHeight: 2 }}>
+            $env:GATEWAY_API_KEY = "your_btl_key"<br />
+            $env:CRITCACHE_MOCK = "1"<br />
+            npx critcache analyze .
+          </div>
+        </div>
 
         {/* ── Section 4: Commands ── */}
         <h2 style={sectionHeadingStyle}>Commands</h2>
@@ -215,30 +223,188 @@ function Docs() {
           No API key required. Simulates the full pipeline locally — file discovery, parallel agents, live renderer, synthesis pass, and report writer all run exactly as in production, but LLM calls are replaced with a local mock that simulates realistic cache hit behavior. Pass 1 shows cache misses, pass 2 shows cache hits — the cold-to-warm story works correctly in mock mode.
         </p>
 
+        {/* Sub-section: watch */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>watch</h3>
+        <div style={codeBlockStyle}>
+          <span>$env:GATEWAY_API_KEY = "your_btl_key"</span>
+          <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache watch .</span>
+          <CopyButton text="npx critcache watch ." />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Sits in your terminal while you code. Every time you save a file, critcache re-analyzes it through BTL Runtime and shows whether it was a cache hit or miss. First save: ~3800ms miss. Second save: ~400ms hit. That is BTL Runtime cache warming in real time — no commands needed, just save and watch.
+        </p>
+        <OptionsTable
+          rows={[
+            { option: '--max-files, -m', default: '20', description: 'Maximum files to watch' },
+            { option: '--debounce, -d', default: '600', description: 'Debounce delay in ms after a file save' },
+            { option: '--sarif', default: '—', description: 'Write live-updating .sarif on each change' },
+          ]}
+        />
+
+        {/* Sub-section: review-pr */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>review-pr</h3>
+        <div style={codeBlockStyle}>
+          <span>$env:GATEWAY_API_KEY = "your_btl_key"</span>
+          <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache review-pr . main</span>
+          <CopyButton text="npx critcache review-pr . main" />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Reviews only the files changed between your current branch and a target branch. The daily-driver mode for PR review — focuses analysis on what actually changed, not the whole repo. Uses git diff under the hood, no GitHub API required.
+        </p>
+        <OptionsTable
+          rows={[
+            { option: '--concurrency, -c', default: '6', description: 'Parallel requests at once' },
+            { option: '--output, -o', default: 'critcache-pr-report.md', description: 'Report output path' },
+            { option: '--sarif', default: '—', description: 'Also write a .sarif report' },
+          ]}
+        />
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '14px', margin: '24px 0 0 0', lineHeight: 1.5, fontWeight: 600 }}>
+          Examples:
+        </p>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache review-pr . main</span>
+          <CopyButton text="npx critcache review-pr . main" />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache review-pr . origin/main</span>
+          <CopyButton text="npx critcache review-pr . origin/main" />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache review-pr . HEAD~1</span>
+          <CopyButton text="npx critcache review-pr . HEAD~1" />
+        </div>
+
         {/* Sub-section: models */}
         <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>models</h3>
         <div style={codeBlockStyle}>
-          <span>$ npx critcache models</span>
+          <span>$env:GATEWAY_API_KEY = "your_btl_key"</span>
+          <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache models</span>
           <CopyButton text="npx critcache models" />
         </div>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
-          Lists all models available on BTL Runtime — over 200 models across OpenAI, Anthropic, DeepSeek, Gemini, Mistral, and more. Use any model ID as your BTL_MODEL env var.
+          Lists all models available on BTL Runtime — 200+ models across OpenAI, Anthropic, DeepSeek, Gemini, Mistral and more. Use any model ID as your BTL_MODEL env var.
         </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '14px', margin: '24px 0 8px 0', lineHeight: 1.5, fontWeight: 600 }}>
+          PowerShell example to set a specific model:
+        </p>
+        <div style={codeBlockStyle}>
+          <span>$env:BTL_MODEL = "claude-sonnet-4-6"</span>
+          <CopyButton text={'$env:BTL_MODEL = "claude-sonnet-4-6"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache analyze .</span>
+          <CopyButton text="npx critcache analyze ." />
+        </div>
 
         {/* Sub-section: stats */}
         <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>stats</h3>
         <div style={codeBlockStyle}>
-          <span>$ npx critcache stats</span>
+          <span>$env:GATEWAY_API_KEY = "your_btl_key"</span>
+          <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache stats</span>
           <CopyButton text="npx critcache stats" />
         </div>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
-          Shows cumulative spend and savings across all critcache runs in your BTL Runtime workspace — total requests, benchmark cost, cached input tokens, and cache hit rate. Pulls live data from BTL Runtime's /v1/usage/summary endpoint.
-        </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', fontStyle: 'italic', margin: '8px 0 48px 0', lineHeight: 1.4 }}>
-          Requires GATEWAY_API_KEY. Shows real workspace data — not just the current run.
+          Shows cumulative spend and savings across all critcache runs in your BTL Runtime workspace — total requests, benchmark cost, cached input tokens, cache hit rate, and a breakdown of every savings mechanism BTL Runtime applied. Pulls live data from BTL Runtime.
         </p>
 
-        {/* ── Section 5: Environment variables ── */}
+        {/* ── Section 5a: SARIF output ── */}
+        <h2 style={sectionHeadingStyle}>SARIF output</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
+          Add <code style={{ color: '#39FF6A' }}>--sarif</code> to any analysis command to write a SARIF v2.1 report alongside the markdown report. SARIF is the standard format consumed natively by GitHub Code Scanning, VS Code, GitLab, and Azure DevOps.
+        </p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '14px', margin: '0 0 12px 0' }}>
+          PowerShell:
+        </p>
+        <div style={codeBlockStyle}>
+          <span>npx critcache analyze . --sarif</span>
+          <CopyButton text="npx critcache analyze . --sarif" />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache review-pr . main --sarif</span>
+          <CopyButton text="npx critcache review-pr . main --sarif" />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache watch . --sarif</span>
+          <CopyButton text="npx critcache watch . --sarif" />
+        </div>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '14px', margin: '24px 0 12px 0' }}>
+          GitHub Actions CI example:
+        </p>
+        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px' }}>
+          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#39FF6A', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`- name: Run critcache
+  run: npx critcache review-pr . main --sarif
+  env:
+    GATEWAY_API_KEY: \${{ secrets.BTL_KEY }}
+
+- name: Upload to Code Scanning
+  uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: critcache-pr-report.sarif`}</pre>
+          <CopyButton text="- name: Run critcache\n  run: npx critcache review-pr . main --sarif\n  env:\n    GATEWAY_API_KEY: \${{ secrets.BTL_KEY }}\n\n- name: Upload to Code Scanning\n  uses: github/codeql-action/upload-sarif@v3\n  with:\n    sarif_file: critcache-pr-report.sarif" />
+        </div>
+
+        {/* ── Section 5b: Custom review rules ── */}
+        <h2 style={sectionHeadingStyle}>Custom review rules</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
+          Create a <code style={{ color: '#39FF6A' }}>.critcacherules</code> file in your repo root to focus analysis on what matters to your team:
+        </p>
+        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px' }}>
+          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#9BA39C', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`# Security
+- Flag hardcoded credentials, API keys, or tokens
+- Check for SQL injection vulnerabilities in raw queries
+
+# Performance
+- Look for N+1 query patterns in database calls
+- Flag synchronous operations in async contexts
+
+# Team standards
+- This is a financial application — treat any unvalidated input as high severity`}</pre>
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '14px', margin: '16px 0 48px 0', lineHeight: 1.6, fontStyle: 'italic' }}>
+          Rules are appended to the fixed system prompt and hashed into the prompt fingerprint. Changing your rules file shows as a fingerprint change and correctly busts the BTL Runtime cache — ensuring fresh analysis that reflects your updated standards.
+        </p>
+
+        {/* ── Section 5c: Prompt fingerprints ── */}
+        <h2 style={sectionHeadingStyle}>Prompt fingerprints</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
+          Every analyze, compare, review-pr, and watch run prints a prompt fingerprint box showing the hash of the four cache-determining components:
+        </p>
+        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px' }}>
+          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#9BA39C', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`┌─ Prompt Fingerprint ─────────────────────────────┐
+│ system       3a16f7a  ✓ stable
+│ schema       3a16f7a  ✓ stable
+│ model        btl-2    ✓ stable
+│ temperature  0        ✓ stable
+│ rules        e825f7a  active
+│ overall      b0da2ed  ✓ cache-friendly
+│ last run     3h ago
+└───────────────────────────────────────────────────┘`}</pre>
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          If any component changes between runs, critcache warns you immediately:
+        </p>
+        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px', marginTop: '12px' }}>
+          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#E8EDE9', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`⚠ Prompt fingerprint changed since last run.
+  Changed: rules
+  Expect cache misses until the prompt stabilizes.`}</pre>
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 48px 0', lineHeight: 1.6, fontStyle: 'italic' }}>
+          This is the "git blame for cache misses" — instead of wondering why your cache hit rate dropped, critcache tells you exactly which component changed and broke it.
+        </p>
+
+        {/* ── Section 6: Environment variables ── */}
         <h2 style={sectionHeadingStyle}>Environment variables</h2>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
           <thead>
@@ -254,7 +420,7 @@ function Docs() {
               ['GATEWAY_API_KEY', 'Yes*', '—', 'Your BTL Runtime API key'],
               ['BTL_BASE_URL', 'No', 'https://api.badtheorylabs.com/v1', 'BTL Runtime base URL'],
               ['BTL_MODEL', 'No', 'btl-2', 'Model to use for analysis'],
-              ['CRITCACHE_MOCK', 'No', '—', 'Set to 1 to enable mock mode'],
+              ['CRITCACHE_MOCK', 'No', '—', 'Set to 1 to enable mock mode (no key needed)'],
             ].map((row, i) => (
               <tr key={i} style={{ background: i % 2 === 0 ? '#0B0E0C' : '#0F1410' }}>
                 {row.map((cell, j) => (
@@ -266,9 +432,15 @@ function Docs() {
             ))}
           </tbody>
         </table>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', fontStyle: 'italic', margin: '8px 0 48px 0', lineHeight: 1.4 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', fontStyle: 'italic', margin: '8px 0 12px 0', lineHeight: 1.4 }}>
           * Not required when CRITCACHE_MOCK=1 is set.
         </p>
+        <div style={{ background: '#0F1410', borderRadius: '12px', padding: '16px', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#39FF6A', lineHeight: 2, marginBottom: '48px', border: '1px solid #1C2420' }}>
+          <div style={{ color: '#9BA39C', fontSize: '12px', marginBottom: '4px' }}># Windows PowerShell — set env vars before running</div>
+          $env:GATEWAY_API_KEY = "your_btl_key"<br />
+          $env:BTL_MODEL = "btl-2"<br />
+          $env:CRITCACHE_MOCK = "1"&nbsp;&nbsp;# mock mode, no key needed
+        </div>
 
         {/* ── Section 6: How BTL Runtime caching works ── */}
         <h2 style={sectionHeadingStyle}>How BTL Runtime caching works</h2>
@@ -327,14 +499,81 @@ function Docs() {
               margin: '0 auto',
             }}
           >
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
-              $ CRITCACHE_MOCK=1 npx critcache compare .
-            </span>
-            <CopyButton text="CRITCACHE_MOCK=1 npx critcache compare ." />
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#9BA39C' }}># No key needed — try it now</span>
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 16px 0', lineHeight: 1.4, textAlign: 'center' }}>
-            No key needed — try it now
-          </p>
+          <div
+            style={{
+              ...glassStyle,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderRadius: '10px',
+              padding: '14px 18px',
+              gap: '12px',
+              textAlign: 'left',
+              maxWidth: '460px',
+              margin: '8px auto',
+            }}
+          >
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
+              $env:CRITCACHE_MOCK = "1"
+            </span>
+            <CopyButton text={'$env:CRITCACHE_MOCK = "1"'} />
+          </div>
+          <div
+            style={{
+              ...glassStyle,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderRadius: '10px',
+              padding: '14px 18px',
+              gap: '12px',
+              textAlign: 'left',
+              maxWidth: '460px',
+              margin: '0 auto 16px auto',
+            }}
+          >
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
+              npx critcache compare .
+            </span>
+            <CopyButton text="npx critcache compare ." />
+          </div>
+          <div
+            style={{
+              ...glassStyle,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderRadius: '10px',
+              padding: '14px 18px',
+              gap: '12px',
+              textAlign: 'left',
+              maxWidth: '460px',
+              margin: '0 auto',
+            }}
+          >
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#9BA39C' }}># Full experience</span>
+          </div>
+          <div
+            style={{
+              ...glassStyle,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderRadius: '10px',
+              padding: '14px 18px',
+              gap: '12px',
+              textAlign: 'left',
+              maxWidth: '460px',
+              margin: '8px auto',
+            }}
+          >
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
+              $env:GATEWAY_API_KEY = "your_btl_key"
+            </span>
+            <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+          </div>
           <div
             style={{
               ...glassStyle,
@@ -350,13 +589,10 @@ function Docs() {
             }}
           >
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#39FF6A', fontWeight: 600 }}>
-              $ npx critcache compare .
+              npx critcache compare .
             </span>
             <CopyButton text="npx critcache compare ." />
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '13px', margin: '8px 0 0 0', lineHeight: 1.4, textAlign: 'center' }}>
-            Full experience — requires GATEWAY_API_KEY
-          </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginTop: '24px' }}>
             <a
               href="https://www.npmjs.com/package/critcache"
