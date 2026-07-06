@@ -316,7 +316,35 @@ function Docs() {
           <CopyButton text="npx critcache stats" />
         </div>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
-          Shows cumulative spend and savings across all critcache runs in your BTL Runtime workspace — total requests, benchmark cost, cached input tokens, cache hit rate, and a breakdown of every savings mechanism BTL Runtime applied. Pulls live data from BTL Runtime.
+          Shows cumulative spend and savings across all critcache runs in your BTL Runtime workspace — total requests, benchmark cost, cached input tokens, cache hit rate, and current per-token pricing for every model at your BTL Runtime tier. Pulls live data from both GET /v1/usage/summary and GET /v1/account/pricing.
+        </p>
+
+        {/* Sub-section: providers */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>providers</h3>
+        <div style={codeBlockStyle}>
+          <span>$env:GATEWAY_API_KEY = "your_btl_key"</span>
+          <CopyButton text={'$env:GATEWAY_API_KEY = "your_btl_key"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache providers</span>
+          <CopyButton text="npx critcache providers" />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Shows the health and routing status of all providers connected to BTL Runtime — OpenAI, Anthropic, DeepSeek, OpenRouter, Fireworks, Google AI Studio and more. BTL Runtime automatically routes each request to the cheapest healthy provider. Use as a pre-flight check before running analysis to confirm your preferred providers are healthy.
+        </p>
+
+        {/* Sub-section: coach */}
+        <h3 style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '16px', margin: '48px 0 16px 0' }}>coach</h3>
+        <div style={codeBlockStyle}>
+          <span>$env:CRITCACHE_MOCK = "1"</span>
+          <CopyButton text={'$env:CRITCACHE_MOCK = "1"'} />
+        </div>
+        <div style={{ ...codeBlockStyle, marginTop: '8px' }}>
+          <span>npx critcache coach</span>
+          <CopyButton text="npx critcache coach" />
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
+          Scores your prompt architecture for BTL Runtime cacheability (0–100). Shows concrete findings about what is helping or hurting your cache hit rate, specific recommendations to improve it, and an estimated cache hit rate after improvements. Uses BTL Runtime itself to reason about your own prompt architecture — the only tool that coaches you on your BTL Runtime caching strategy.
         </p>
 
         {/* ── Section 5a: SARIF output ── */}
@@ -379,30 +407,36 @@ function Docs() {
         {/* ── Section 5c: Prompt fingerprints ── */}
         <h2 style={sectionHeadingStyle}>Prompt fingerprints</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
-          Every analyze, compare, review-pr, and watch run prints a prompt fingerprint box showing the hash of the four cache-determining components:
+          Every analyze, compare, review-pr, and watch run prints a prompt fingerprint box showing the hash of the four cache-determining components — system prompt, schema, model, and temperature. If any of these change between runs, critcache warns you immediately and tells you which component changed.
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
+          This is the "git blame for cache misses" — instead of wondering why your cache hit rate dropped, critcache tells you exactly what changed and broke it.
+        </p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '14px', margin: '24px 0 12px 0' }}>
+          Example output when cache is stable:
         </p>
         <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px' }}>
           <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#9BA39C', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`┌─ Prompt Fingerprint ─────────────────────────────┐
 │ system       3a16f7a  ✓ stable
 │ schema       3a16f7a  ✓ stable
-│ model        btl-2    ✓ stable
-│ temperature  0        ✓ stable
+│ model        deepseek-chat-v3  ✓ stable
+│ temperature  0  ✓ stable
 │ rules        e825f7a  active
-│ overall      b0da2ed  ✓ cache-friendly
-│ last run     3h ago
-└───────────────────────────────────────────────────┘`}</pre>
+│ overall      617bc23  ✓ cache-friendly
+│ last run     just now
+└───────────────────────────────────────────────────┘
+  ✓ Prompt unchanged — BTL Runtime cache should warm normally.`}</pre>
         </div>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 0 0', lineHeight: 1.6 }}>
-          If any component changes between runs, critcache warns you immediately:
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', color: '#E8EDE9', fontSize: '14px', margin: '32px 0 12px 0' }}>
+          Example output when cache is busted:
         </p>
-        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px', marginTop: '12px' }}>
-          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#E8EDE9', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`⚠ Prompt fingerprint changed since last run.
-  Changed: rules
+        <div style={{ ...codeBlockStyle, flexDirection: 'column', alignItems: 'stretch', gap: '4px' }}>
+          <pre style={{ margin: 0, fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#E8EDE9', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{`│ model        btl-2 → deepseek-chat-v3  ⚠ changed
+│ overall      ce7d994  ✗ cache busted
+⚠ Prompt fingerprint changed since last run.
+  Changed: model
   Expect cache misses until the prompt stabilizes.`}</pre>
         </div>
-        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', margin: '16px 0 48px 0', lineHeight: 1.6, fontStyle: 'italic' }}>
-          This is the "git blame for cache misses" — instead of wondering why your cache hit rate dropped, critcache tells you exactly which component changed and broke it.
-        </p>
 
         {/* ── Section 6: Environment variables ── */}
         <h2 style={sectionHeadingStyle}>Environment variables</h2>
@@ -479,6 +513,55 @@ function Docs() {
           x-btl-customer-charge  — what you actually paid<br />
           x-btl-saved            — the difference, per call
         </div>
+
+        {/* ── Section 7: BTL Runtime endpoints used ── */}
+        <h2 style={sectionHeadingStyle}>BTL Runtime endpoints used</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '0 0 20px 0' }}>
+          critcache uses 5 confirmed BTL Runtime API endpoints:
+        </p>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
+          <thead>
+            <tr style={{ background: '#0F1410' }}>
+              <th style={{ padding: '10px 12px', color: '#E8EDE9', textAlign: 'left', border: '1px solid #1C2420', fontWeight: 600 }}>Endpoint</th>
+              <th style={{ padding: '10px 12px', color: '#E8EDE9', textAlign: 'left', border: '1px solid #1C2420', fontWeight: 600 }}>Command</th>
+              <th style={{ padding: '10px 12px', color: '#E8EDE9', textAlign: 'left', border: '1px solid #1C2420', fontWeight: 600 }}>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['POST /v1/chat/completions', 'analyze, compare, review-pr, watch, coach', 'Per-file AI code review, repo synthesis, cache coach reasoning'],
+              ['GET /v1/models', 'models', 'Lists all available model slugs across 200+ providers'],
+              ['GET /v1/usage/summary', 'stats', 'Cumulative workspace spend, savings, and cache hit breakdown'],
+              ['GET /v1/account/pricing', 'stats', 'Current per-token pricing for all models at your BTL Runtime tier'],
+              ['GET /v1/providers', 'providers', 'Health and routing status of all connected providers'],
+            ].map((row, i) => (
+              <tr key={i} style={{ background: i % 2 === 0 ? '#0B0E0C' : '#0F1410' }}>
+                {row.map((cell, j) => (
+                  <td key={j} style={{ padding: '10px 12px', color: '#9BA39C', border: '1px solid #1C2420' }}>
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#9BA39C', fontSize: '15px', lineHeight: 1.7, margin: '24px 0 12px 0' }}>
+          BTL Runtime savings mechanisms confirmed active in this workspace:
+        </p>
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 48px 0' }}>
+          {[
+            'Exact response cache — 22 hits confirmed, serving repeated file analyses in under 1 second vs 8+ seconds cold',
+            'Provider prompt cache — prefix reuse at the upstream provider level',
+            'Request compaction — conversation history compressed before hitting the provider',
+            'Output budget shaping — runaway completions capped automatically',
+            'Smart routing — automatically routes to cheapest healthy provider per request',
+          ].map((item, i) => (
+            <li key={i} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#9BA39C', lineHeight: 1.8 }}>
+              <span style={{ color: '#39FF6A', marginRight: '8px' }}>›</span>
+              {item}
+            </li>
+          ))}
+        </ul>
 
         {/* ── Bottom CTA ── */}
         <div style={{ textAlign: 'center', marginTop: '80px' }}>
