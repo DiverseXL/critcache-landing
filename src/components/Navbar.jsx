@@ -57,7 +57,7 @@ function Navbar() {
           >
             features
           </a>
-          <Link to="/docs" className="hover:text-crit transition-colors">
+          <Link to="/docs" className="hover:text-crit transition-colors" onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })}>
             docs
           </Link>
           <a href="https://github.com/DiverseXL/critcache" target="_blank" rel="noreferrer" className="hover:text-crit transition-colors">

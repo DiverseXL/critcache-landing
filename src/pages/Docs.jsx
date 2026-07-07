@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 function CopyIcon() {
@@ -97,6 +97,10 @@ function OptionsTable({ rows }) {
 }
 
 function Docs() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
   return (
     <div style={{ background: '#0B0E0C', minHeight: '100vh' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '80px 24px' }}>
